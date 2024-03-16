@@ -4,7 +4,7 @@ from typing import Iterator
 
 
 class BackForthCycler:
-    """Wraps a list (or other iterator), allowing you to step back and forth through it
+    """walks back and forth through a list (or other iterator)
 
     Example:
         >>> mylist = ["cat", "pig", "cow"]
@@ -22,7 +22,7 @@ class BackForthCycler:
     """
 
     def __init__(self, iterator: Iterator):
-        """TODO"""
+        """Sets attributes at instantiation of the class"""
         self.iterator: Iterator = iterator
         self.current_idx: int = len(self.iterator) - 1
 
@@ -43,45 +43,61 @@ class BackForthCycler:
         return self.iterator[self.current_idx]
 
 
-def menu(menu_text: str, choices: list[str]) -> str:
-    """TODO"""
+def menu(menu_text: str, choices: tuple[str, ...]) -> str:
+    """Runs a persistent menu in the terminal (using curses library in the standard python library)
 
-    def menu_state_string(choices: list[str], selected_idx: int) -> None:
-        """TODO"""
-        menu_state_string: str = ""
-        for idx, choice in enumerate(choices):
-            if idx == selected_idx:
-                menu_state_string += f"[ {choice} ]\n"
-            else:
-                menu_state_string += f"  {choice}\n"
-        return menu_state_string
+    Notes:
+        The python curses library only works on unix machines (on windows, it will work on WSL) 
 
-    menu_state: dict[str, str] = {"user_choice": None}
+    Args:
+        menu_text (str): TODO
+        choices (tuple[str, ...]): TODO
 
-    def session(win, menu_state: dict[str, str], choices=list[str]) -> None:
-        """TODO"""
+    Returns:
+        string: TODO
+    """
+    _menu_state: dict[str, str] = {"user_choice": None}
+
+    def session(win, _menu_state: dict[str, str], choices=tuple[str, ...]) -> None:
+        """Creates and manages the menu
+
+        args:
+            win (TODO): TODO,
+            _menu_state (dict[str, str]): TODO,
+            choices (tuple[str, ...]): TODO
+        """
+
         cycler: BackForthCycler = BackForthCycler(range(len(choices)))
         current_selected_idx: int = cycler.forth()
         win.nodelay(True)
         win.clear()
         win.addstr(menu_text + "\n")
-        win.addstr(menu_state_string(choices, current_selected_idx))
+        for choice_idx, choice in enumerate(choices):
+            if choice_idx == current_selected_idx:
+                win.addstr(f"[ {choice} ]\n")
+            else:
+                win.addstr(f"  {choice}\n")
         while True:
             try:
                 key_pressed = win.getkey()
                 win.clear()
-                win.addstr(menu_text + "\n")
-                win.addstr(menu_state_string(choices, current_selected_idx))
                 if key_pressed == "KEY_DOWN":
                     current_selected_idx: int = cycler.forth()
                 elif key_pressed == "KEY_UP":
                     current_selected_idx: int = cycler.back()
                 if key_pressed == os.linesep:
-                    menu_state["user_choice"] = choices[current_selected_idx]
+                    _menu_state["user_choice"] = choices[current_selected_idx]
+                    break
+                win.addstr(menu_text + "\n")
+                for choice_idx, choice in enumerate(choices):
+                    if choice_idx == current_selected_idx:
+                        win.addstr(f"[ {choice} ]\n")
+                    else:
+                        win.addstr(f"  {choice}\n")
             except curses.error:
                 # i.e. no keypress detected #
                 pass
 
-    curses.wrapper(session, menu_state=menu_state, choices=choices)
+    curses.wrapper(session, _menu_state=_menu_state, choices=choices)
 
-    return menu_state("user_choice")
+    return _menu_state["user_choice"]
