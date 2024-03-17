@@ -43,14 +43,14 @@ class BackForthCycler:
         return self.iterator[self.current_idx]
 
 
-def menu(menu_text: str, choices: tuple[str, ...]) -> str:
+def menu(static_menu_text: str, choices: tuple[str, ...]) -> str:
     """Runs a persistent menu in the terminal (using curses library in the standard python library)
 
     Notes:
         The python curses library only works on unix machines (on windows, it will work on WSL) 
 
     Args:
-        menu_text (str): TODO
+        static_menu_text (str): TODO
         choices (tuple[str, ...]): TODO
 
     Returns:
@@ -71,7 +71,7 @@ def menu(menu_text: str, choices: tuple[str, ...]) -> str:
         current_selected_idx: int = cycler.forth()
         win.nodelay(True)
         win.clear()
-        win.addstr(menu_text + "\n")
+        win.addstr(static_menu_text + "\n")
         for choice_idx, choice in enumerate(choices):
             if choice_idx == current_selected_idx:
                 win.addstr(f"[ {choice} ]\n")
@@ -88,7 +88,7 @@ def menu(menu_text: str, choices: tuple[str, ...]) -> str:
                 if key_pressed == os.linesep:
                     _menu_state["user_choice"] = choices[current_selected_idx]
                     break
-                win.addstr(menu_text + "\n")
+                win.addstr(static_menu_text + "\n")
                 for choice_idx, choice in enumerate(choices):
                     if choice_idx == current_selected_idx:
                         win.addstr(f"[ {choice} ]\n")
