@@ -1,5 +1,5 @@
 """
-$ python -m examples.multi_page_menu
+$ python -m examples.nested_menus
 """
 
 from terminal_menu import menu

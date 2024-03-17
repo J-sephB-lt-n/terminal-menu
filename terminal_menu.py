@@ -57,7 +57,6 @@ def menu(static_menu_text: str, choices: tuple[str, ...]) -> str:
         string: TODO
     """
     _menu_state: dict[str, str] = {"user_choice": None}
-
     def session(win, _menu_state: dict[str, str], choices=tuple[str, ...]) -> None:
         """Creates and manages the menu
 
@@ -69,14 +68,20 @@ def menu(static_menu_text: str, choices: tuple[str, ...]) -> str:
 
         cycler: BackForthCycler = BackForthCycler(range(len(choices)))
         current_selected_idx: int = cycler.forth()
+
+        max_choice_len: int = max([len(choice) for choice in choices])
+        
+        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
+        BLACK_WHITE = curses.color_pair(1)
+
         win.nodelay(True)
         win.clear()
         win.addstr(static_menu_text + "\n")
         for choice_idx, choice in enumerate(choices):
             if choice_idx == current_selected_idx:
-                win.addstr(f"[ {choice} ]\n")
+                win.addstr(f" {choice:<{max_choice_len+1}}\n", BLACK_WHITE)
             else:
-                win.addstr(f"  {choice}\n")
+                win.addstr(f" {choice}\n")
         while True:
             try:
                 key_pressed = win.getkey()
@@ -91,9 +96,9 @@ def menu(static_menu_text: str, choices: tuple[str, ...]) -> str:
                 win.addstr(static_menu_text + "\n")
                 for choice_idx, choice in enumerate(choices):
                     if choice_idx == current_selected_idx:
-                        win.addstr(f"[ {choice} ]\n")
+                        win.addstr(f" {choice:<{max_choice_len+1}}\n", BLACK_WHITE)
                     else:
-                        win.addstr(f"  {choice}\n")
+                        win.addstr(f" {choice}\n")
             except curses.error:
                 # i.e. no keypress detected #
                 pass
