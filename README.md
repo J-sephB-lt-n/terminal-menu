@@ -1,4 +1,4 @@
-# Menu Interface for Terminal-Based Python Applications 
+# Terminal Menu using Python 
 
 ```python
 from terminal_menu import menu
@@ -10,7 +10,6 @@ print(f"user chose '{user_choice}'")
 ```
 
 ![](./examples/gifs/basic_menu.gif)
-
 I wanted a simple OS-agnostic interface for creating menus in my python command-line applications (using only the python standard library). 
 
 I could not find one that I liked, so I built this one. 
