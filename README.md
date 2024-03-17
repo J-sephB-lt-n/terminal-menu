@@ -1,5 +1,16 @@
 # Menu Interface for Terminal-Based Python Applications 
 
+```python
+from terminal_menu import menu
+user_choice: str = menu(
+    static_menu_text="Please choose an annoying little dog:",
+    choices=("Chihuahua", "Pomeranian", "Jack Russell"),
+)
+print(f"user chose '{user_choice}'")
+```
+
+![](./examples/gifs/basic_menu.gif)
+
 I wanted a simple OS-agnostic interface for creating menus in my python command-line applications (using only the python standard library). 
 
 I could not find one that I liked, so I built this one. 
