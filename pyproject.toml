@@ -1,0 +1,25 @@
+[build-system]
+requires      = ["setuptools>=69.2.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "terminal-menu"
+version = "0.0.0"
+description = "Tool for creating menus in terminal (using on the python standard library)"
+readme = "README.md"
+authors = [{ name = "Joseph Bolton", email = "joseph.jazz.bolton@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = ["terminal", "menu", "curses"]
+dependencies = []
+requires-python = ">=3.6"
+
+[project.optional-dependencies]
+build = ["build", "twine"]
+
+[project.urls]
+Homepage = "https://github.com/J-sephB-lt-n/terminal-menu"
