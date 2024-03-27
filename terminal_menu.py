@@ -1,10 +1,14 @@
+"""
+Code for creating a terminal menu
+"""
+
 import curses
 import os
 from typing import Iterator
 
 
 class BackForthCycler:
-    """walks back and forth through a list (or other iterator)
+    """Walks back and forth through a list (or other iterator)
 
     Example:
         >>> mylist = ["cat", "pig", "cow"]
@@ -44,40 +48,40 @@ class BackForthCycler:
 
 
 def menu(static_menu_text: str, choices: tuple[str, ...]) -> str:
-    """Runs a persistent menu in the terminal (using curses library in the standard python library)
+    """Runs a persistent menu in the terminal
 
     Notes:
-        The python curses library only works on unix machines (on windows, it will work on WSL) 
+        The python curses library only works on unix machines (on windows, it will work on WSL)
 
     Args:
-        static_menu_text (str): TODO
-        choices (tuple[str, ...]): TODO
+        static_menu_text (str): Text to display at the top of the menu
+        choices (tuple[str, ...]): Menu items from which the user can select
 
     Returns:
-        string: TODO
+        string: The item (from `choices`) which the user selected
     """
-    _menu_state: dict[str, str] = {"user_choice": None}
-    def session(win, _menu_state: dict[str, str], choices=tuple[str, ...]) -> None:
+    _menu_state: dict[str, str | None] = {"user_choice": None}
+
+    def session(win, _menu_state: dict[str, str], _choices=tuple[str, ...]) -> None:
         """Creates and manages the menu
 
-        args:
-            win (TODO): TODO,
-            _menu_state (dict[str, str]): TODO,
-            choices (tuple[str, ...]): TODO
+        Args:
+            win (TODO): TODO
+            _menu_state (dict[str, str|None]): Persistent object used to store the user choice
+            _choices (tuple[str, ...]): Menu items from which the user can select
         """
-
-        cycler: BackForthCycler = BackForthCycler(range(len(choices)))
+        cycler: BackForthCycler = BackForthCycler(range(len(_choices)))
         current_selected_idx: int = cycler.forth()
 
-        max_choice_len: int = max([len(choice) for choice in choices])
-        
+        max_choice_len: int = max([len(choice) for choice in _choices])
+
         curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
         BLACK_WHITE = curses.color_pair(1)
 
         win.nodelay(True)
         win.clear()
         win.addstr(static_menu_text + "\n")
-        for choice_idx, choice in enumerate(choices):
+        for choice_idx, choice in enumerate(_choices):
             if choice_idx == current_selected_idx:
                 win.addstr(f" {choice:<{max_choice_len+1}}\n", BLACK_WHITE)
             else:
@@ -87,14 +91,14 @@ def menu(static_menu_text: str, choices: tuple[str, ...]) -> str:
                 key_pressed = win.getkey()
                 win.clear()
                 if key_pressed == "KEY_DOWN":
-                    current_selected_idx: int = cycler.forth()
+                    current_selected_idx = cycler.forth()
                 elif key_pressed == "KEY_UP":
-                    current_selected_idx: int = cycler.back()
+                    current_selected_idx = cycler.back()
                 if key_pressed == os.linesep:
-                    _menu_state["user_choice"] = choices[current_selected_idx]
+                    _menu_state["user_choice"] = _choices[current_selected_idx]
                     break
                 win.addstr(static_menu_text + "\n")
-                for choice_idx, choice in enumerate(choices):
+                for choice_idx, choice in enumerate(_choices):
                     if choice_idx == current_selected_idx:
                         win.addstr(f" {choice:<{max_choice_len+1}}\n", BLACK_WHITE)
                     else:
@@ -103,6 +107,6 @@ def menu(static_menu_text: str, choices: tuple[str, ...]) -> str:
                 # i.e. no keypress detected #
                 pass
 
-    curses.wrapper(session, _menu_state=_menu_state, choices=choices)
+    curses.wrapper(session, _menu_state=_menu_state, _choices=choices)
 
     return _menu_state["user_choice"]

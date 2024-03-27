@@ -1,5 +1,7 @@
 # Terminal Menu using Python 
 
+[![Downloads](https://static.pepy.tech/badge/terminal-menu)](https://pepy.tech/project/terminal-menu)
+
 ![](./examples/gifs/nested_menus.gif)
 
 Here is a minimal usage example:
